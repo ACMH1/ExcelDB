@@ -15,16 +15,19 @@ class SheetDAOFactory:
             self.workbook = openpyxl.load_workbook(file_name)
             self.sheet_list = self.workbook.get_sheet_names()
         except FileNotFoundError:
-            self.workbbook = openpyxl.Workbook()
+            self.workbook = openpyxl.Workbook()
         
     def save(self):
         self.workbook.save(self.file_name)
     
-    def create_sheet_DAO(self, sheet_name, *headers):
-        pass
+    def create_sheet_DAO(self, sheet_name, headers):
+        worksheet = self.workbook.create_sheet(sheet_name)
+        for y, header in enumerate(headers):
+            worksheet.cell(row=1, column=y) = header
+        return SheetDAOImpl(worksheet)
     
     def get_sheet_DAO(self, sheet_name):
-        pass
+        return SheetDAOImpl(self.workbook[sheet_name])
     
 class SheetDAOImpl:
     

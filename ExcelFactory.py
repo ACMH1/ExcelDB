@@ -23,7 +23,7 @@ class SheetDAOFactory:
     def create_sheet_DAO(self, sheet_name, headers):
         worksheet = self.workbook.create_sheet(sheet_name)
         for y, header in enumerate(headers):
-            worksheet.cell(row=1, column=y) = header
+            worksheet.cell(row=1, column=y + 1).value = header
         return SheetDAOImpl(worksheet)
     
     def get_sheet_DAO(self, sheet_name):
@@ -34,7 +34,7 @@ class SheetDAOImpl:
     def __init__(self, worksheet):
         self.worksheet = worksheet
         self.column_headers = []
-        for column in self.worksheet.itercols():
+        for column in self.worksheet.iter_cols():
             self.column_headers.append(column[0].value)
     
     def create_row(self, row):

@@ -12,22 +12,37 @@ import os
 
 class TestExcelFactory(unittest.TestCase):
     
-    def setUp(self):
-        self.file_name = "test.xlsx"
-        workbook = openpyxl.Workbook()
+    @classmethod
+    def setUpClass(cls):
+        cls.file_name = "test.xlsx"
+        cls.workbook = openpyxl.Workbook()
         title_array = ["alpha", "beta", "charlie"]
         for title in title_array:
-            workbook.create_sheet(title=title)
-        self.beta_headers_array = ["header1", "header2", "header3"]
-        for x, header in enumerate(self.beta_headers_array):
-            workbook["beta"].cell(column = x+1, row = 1).value = header
-        workbook.save(self.file_name)
-        self.ExcelDAO = ExcelFactory.SheetDAOFactory(self.file_name)
+            cls.workbook.create_sheet(title)
+        cls.beta_headers_array = ["header1", "header2", "header3"]
+        for x, header in enumerate(cls.beta_headers_array):
+            cls.workbook["beta"].cell(column = x+1, row = 1).value = header
+        cls.workbook.save(cls.file_name)
+        cls.ExcelDAO = ExcelFactory.SheetDAOFactory(cls.file_name)
+        print("setup test case")
+    
+    @classmethod
+    def tearDownClass(cls):
+        
+        cls.workbook.save(cls.file_name)
+        print("teardown test case")
+    
+    def setUp(self):
+        
+        print("set up test")
     
     def tearDown(self):
-        os.remove(self.file_name)
+        
+        self.workbook.save(self.file_name)
+        print("teardown test")
     
     def test_ExcelFactory_init(self):
+        
         self.assertIsInstance(ExcelFactory.SheetDAOFactory(self.file_name), ExcelFactory.SheetDAOFactory)
         self.assertIsInstance(ExcelFactory.SheetDAOFactory("xyz.xlsx"), ExcelFactory.SheetDAOFactory)
         
@@ -35,13 +50,22 @@ class TestExcelFactory(unittest.TestCase):
 #            ExcelFactory.SheetDAOFactory("xyz.xlsx")
 
     def test_get_sheet_DAO(self):
+        
          self.assertIsInstance(self.ExcelDAO.get_sheet_DAO("beta"), ExcelFactory.SheetDAOImpl)
          self.assertEqual(self.ExcelDAO.get_sheet_DAO("beta").column_headers, self.beta_headers_array)
     
     def test_create_sheet_DAO(self):
-        delta_headers_array = ["header1", "header2", "header3"]
+        
+        delta_headers_array = ["header4", "header5", "header6"]
         self.assertIsInstance(self.ExcelDAO.create_sheet_DAO("delta", delta_headers_array), ExcelFactory.SheetDAOImpl)
         self.assertEqual(self.ExcelDAO.create_sheet_DAO("delta", delta_headers_array).column_headers, delta_headers_array)
+        
+    def test_save(self):
+        
+        self.ExcelDAO.workbook["alpha"]["A1"] = 10
+        self.ExcelDAO.save()
+        testFactory = ExcelFactory.SheetDAOFactory(self.file_name)
+        self.assertEqual(testFactory.workbook["alpha"]["A1"], 10)
     
 if __name__ == "__main__":
     unittest.main()

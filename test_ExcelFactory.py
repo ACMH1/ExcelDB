@@ -8,13 +8,13 @@ Created on Sun Mar 25 03:33:12 2018
 import unittest
 import openpyxl
 import ExcelFactory
-import os
+#import os
 
 class TestExcelFactory(unittest.TestCase):
     
     @classmethod
     def setUpClass(cls):
-        cls.file_name = "test.xlsx"
+        cls.file_name = "TestExcelFactory.xlsx"
         cls.workbook = openpyxl.Workbook()
         title_array = ["alpha", "beta", "charlie"]
         for title in title_array:
@@ -24,22 +24,20 @@ class TestExcelFactory(unittest.TestCase):
             cls.workbook["beta"].cell(column = x+1, row = 1).value = header
         cls.workbook.save(cls.file_name)
         cls.ExcelDAO = ExcelFactory.SheetDAOFactory(cls.file_name)
-        print("setup test case")
+#        print("setup test case")
     
     @classmethod
     def tearDownClass(cls):
-        
         cls.workbook.save(cls.file_name)
-        print("teardown test case")
+#        os.remove(cls.file_name)
+#        print("teardown test case")
     
-    def setUp(self):
-        
-        print("set up test")
+#    def setUp(self):
+#        print("set up test")
     
-    def tearDown(self):
-        
-        self.workbook.save(self.file_name)
-        print("teardown test")
+#    def tearDown(self):
+#        self.workbook.save(self.file_name)
+#        print("teardown test")
     
     def test_ExcelFactory_init(self):
         

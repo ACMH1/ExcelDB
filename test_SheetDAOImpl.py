@@ -36,6 +36,7 @@ class TestSheetDAOImpl(unittest.TestCase):
     
     def test_SheetDAOImpl_init(self):
         self.assertIsInstance(ExcelFactory.SheetDAOImpl(self.beta_workbook), ExcelFactory.SheetDAOImpl)
+        self.assertIsInstance(ExcelFactory.SheetDAOImpl(self.beta_workbook).worksheet, openpyxl.worksheet.Worksheet)
         self.assertEqual(ExcelFactory.SheetDAOImpl(self.beta_workbook).column_headers, self.beta_headers_array)
     
     def test_create_row(self):
